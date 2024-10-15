@@ -40,9 +40,10 @@ router.get("/mensa/menu/:canteenId", async (ctx) => {
 
    const reader = new JsonFilePersistence<Group[]>(`./data/${canteenId}_${date.toISOString().split("T")[0]}.json`);
    const menu = await reader.read();
+   const canteen = CANTEENS.find(canteen => canteen.id === canteenId);
 
    ctx.response.headers.set("Content-Type", "application/json");
-   ctx.response.body = { date, menu };
+   ctx.response.body = { date, canteen, menu };
 });
 
 const app = new Application();
