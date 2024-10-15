@@ -55,7 +55,9 @@ console.log(`Server running on http://localhost:${port}`);
 
 app.listen({ port: port });
 
-Deno.cron("Fetch canteen info and menus for the week at 1 AM", { dayOfWeek: { every: 1 }, hour: { exact: [8, 11, 18]}}, () => {
+// Fetch canteen info and menus in the morning, before opening hours and in the evening
+Deno.cron("Fetch canteen info and menus", { hour: { exact: [8, 11, 18] } }, () => {
+   console.log("Fetching canteen info and menus");
    clearMenus();
    crawlMenusForWeek();
 });
