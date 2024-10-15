@@ -6,15 +6,18 @@ import JsonFilePersistence from "./persistence.ts";
 import { Group } from "./menuParser.ts";
 import { crawlMenusForWeek, clearMenus } from "./crawler.ts";
 
-const router = new Router();
+const apiRouter = new Router({ prefix: "/api" });
+const staticRouter = new Router();
 
-router.get("/mensa", (ctx) => {
-   ctx.response.headers.set("Content-Type", "text/html");
-   const html = Deno.readTextFileSync("./static/index.html");
-   ctx.response.body = html;
+staticRouter.get("/", async (ctx) => {
+   // Serve index.html
+   await ctx.send({
+      root: `${Deno.cwd()}/static`,
+      index: "index.html",
+   });
 });
 
-router.get("/mensa/menu/:canteenId", async (ctx) => {
+apiRouter.get("/menu/:canteenId", async (ctx) => {
    const canteenId = +ctx.params.canteenId;
    const date = ctx.request.url.searchParams.get("date") ? new Date(ctx.request.url.searchParams.get("date")!) : new Date();
 
@@ -41,11 +44,14 @@ router.get("/mensa/menu/:canteenId", async (ctx) => {
 const app = new Application();
 const port = 8080;
 
-app.use(router.routes());
-app.use(router.allowedMethods());
-console.log(`Server running on http://localhost:${port}`);
+app.use(apiRouter.routes());
+app.use(apiRouter.allowedMethods());
+app.use(staticRouter.routes());
+app.use(staticRouter.allowedMethods());
 
 app.listen({ port: port });
+
+console.log(`Server running on http://localhost:${port}`);
 
 // Fetch canteen info and menus in the morning, before opening hours and in the evening
 Deno.cron("Fetch canteen info and menus", { hour: { exact: [8, 11, 18] } }, () => {
