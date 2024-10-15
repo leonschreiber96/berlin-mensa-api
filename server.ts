@@ -9,17 +9,9 @@ import { crawlMenusForWeek, clearMenus } from "./crawler.ts";
 const router = new Router();
 
 router.get("/mensa", (ctx) => {
-   ctx.response.body = `
-   <html>
-      <head>
-         <title>Canteen Endpoints</title>
-      </head>
-      <body>
-      <h1>Canteens</h1>
-         ${CANTEENS.map(canteen => `<a href="/mensa/menu/${canteen.id}">(${canteen.id})</a> <span>${canteen.name}</span><br>`).join("")}
-      </body>
-   </html>
-   `;
+   ctx.response.headers.set("Content-Type", "text/html");
+   const html = Deno.readTextFileSync("./static/index.html");
+   ctx.response.body = html;
 });
 
 router.get("/mensa/menu/:canteenId", async (ctx) => {
