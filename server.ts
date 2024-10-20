@@ -5,9 +5,13 @@ import CANTEENS from "./canteen.ts";
 import JsonFilePersistence from "./persistence.ts";
 import { Group } from "./menuParser.ts";
 import { crawlMenusForWeek, clearMenus } from "./crawler.ts";
+import requestLogger, { flushLogsToDisk } from "./requestLogger.ts";
 
 const apiRouter = new Router({ prefix: "/api" });
 const staticRouter = new Router();
+
+apiRouter.use(requestLogger)
+staticRouter.use(requestLogger)
 
 staticRouter.get("/", async (ctx) => {
    // Serve index.html
@@ -64,4 +68,10 @@ Deno.cron("Fetch canteen info and menus", { hour: { exact: [8, 11, 18] } }, () =
    console.log(new Date().toISOString(), "Fetching canteen info and menus");
    clearMenus();
    crawlMenusForWeek();
+});
+
+// Flush logs to disk every 5 minutes
+Deno.cron("Flush logs to disk", { minute: { every: 5 } }, () => {
+   console.log(new Date().toISOString(), "Flushing logs to disk");
+   flushLogsToDisk();
 });
