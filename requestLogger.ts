@@ -73,7 +73,7 @@ export default async function requestLogger(ctx: any, next: any) {
 function createDailyLogFileIfNotExists(date: string) {
    const logFilePath = `${logsDir}/requestLogs_${date}.json`;
    try {
-      Deno.open(logFilePath, { createNew: true });
+      Deno.openSync(logFilePath, { write: true, createNew: true });
    } catch (err) {
       if (err instanceof Deno.errors.AlreadyExists) {
          // File already exists

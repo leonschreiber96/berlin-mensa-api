@@ -5,7 +5,8 @@ FROM denoland/deno:2.0.2
 WORKDIR /app
 
 # Copy the server file into the container
-COPY server.ts /app/server.ts
+COPY ./*.ts /app
+COPY ./static /app/static
 
 # Create directories for logs and data inside the container
 RUN mkdir -p /app/logs /app/data
