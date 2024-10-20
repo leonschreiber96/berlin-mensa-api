@@ -17,6 +17,11 @@ staticRouter.get("/", async (ctx) => {
    });
 });
 
+apiRouter.get("/", (ctx) => {
+   ctx.response.headers.set("Content-Type", "application/json");
+   ctx.response.body = CANTEENS;
+});
+
 apiRouter.get("/menu/:canteenId", async (ctx) => {
    const canteenId = +ctx.params.canteenId;
    const date = ctx.request.url.searchParams.get("date") ? new Date(ctx.request.url.searchParams.get("date")!) : new Date();
@@ -35,6 +40,7 @@ apiRouter.get("/menu/:canteenId", async (ctx) => {
 
    const reader = new JsonFilePersistence<Group[]>(`./data/${canteenId}_${date.toISOString().split("T")[0]}.json`);
    const menu = await reader.read();
+
    const canteen = CANTEENS.find(canteen => canteen.id === canteenId);
 
    ctx.response.headers.set("Content-Type", "application/json");
@@ -55,7 +61,7 @@ console.log(`Server running on http://localhost:${port}`);
 
 // Fetch canteen info and menus in the morning, before opening hours and in the evening
 Deno.cron("Fetch canteen info and menus", { hour: { exact: [8, 11, 18] } }, () => {
-   console.log("Fetching canteen info and menus");
+   console.log(new Date().toISOString(), "Fetching canteen info and menus");
    clearMenus();
    crawlMenusForWeek();
 });
