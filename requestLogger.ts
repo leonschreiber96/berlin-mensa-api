@@ -92,6 +92,6 @@ export function flushLogsToDisk() {
       const logFilePath = `${logsDir}/requestLogs_${date}.json`;
       createDailyLogFileIfNotExists(date);
       // Append logs to file
-      Deno.writeTextFile(logFilePath, `${JSON.stringify(logs[date])},\n)`, { append: true });
+      Deno.writeTextFile(logFilePath, `${JSON.stringify(logs[date])},\n`, { append: true });
    }
 }

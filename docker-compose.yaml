@@ -1,0 +1,9 @@
+version: '3'
+services:
+  deno-server:
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./logs:/app/logs  # Mount local logs directory
+      - ./data:/app/data  # Mount local data directory

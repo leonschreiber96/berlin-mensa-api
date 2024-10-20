@@ -27,20 +27,21 @@ apiRouter.get("/", (ctx) => {
 });
 
 apiRouter.get("/menu/:canteenId", async (ctx) => {
-   const canteenId = +ctx.params.canteenId;
-   const date = ctx.request.url.searchParams.get("date") ? new Date(ctx.request.url.searchParams.get("date")!) : new Date();
 
+   const canteenId = +ctx.params.canteenId;
    if (isNaN(canteenId) || !CANTEENS.map(canteen => canteen.id).includes(canteenId)) {
       ctx.response.status = 400;
       ctx.response.body = "Invalid canteenId";
       return;
    }
 
-   if (isNaN(Date.parse(date.toString()))) {
+   const dateParam = ctx.request.url.searchParams.get("date") || new Date().toISOString().split("T")[0];
+   if (isNaN(Date.parse(dateParam.toString()))) {
       ctx.response.status = 400;
       ctx.response.body = "Invalid date";
       return;
    }
+   const date = new Date(dateParam);
 
    const reader = new JsonFilePersistence<Group[]>(`./data/${canteenId}_${date.toISOString().split("T")[0]}.json`);
    const menu = await reader.read();
@@ -71,7 +72,7 @@ Deno.cron("Fetch canteen info and menus", { hour: { exact: [8, 11, 18] } }, () =
 });
 
 // Flush logs to disk every 5 minutes
-Deno.cron("Flush logs to disk", { minute: { every: 5 } }, () => {
+Deno.cron("Flush logs to disk", { minute: { every: 1 } }, () => {
    console.log(new Date().toISOString(), "Flushing logs to disk");
    flushLogsToDisk();
 });
