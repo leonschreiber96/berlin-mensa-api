@@ -93,5 +93,8 @@ export function flushLogsToDisk() {
       createDailyLogFileIfNotExists(date);
       // Append logs to file
       Deno.writeTextFile(logFilePath, `${JSON.stringify(logs[date])},\n`, { append: true });
+      // Clear logs from memory
+      logs[date] = [];
+      delete logs[date];
    }
 }
