@@ -65,7 +65,7 @@ app.listen({ port: port });
 console.log(`Server running on http://localhost:${port}`);
 
 // Fetch canteen info and menus in the morning, before opening hours and in the evening
-Deno.cron("Fetch canteen info and menus", { hour: { exact: [8, 11, 18] } }, () => {
+Deno.cron("Fetch canteen info and menus", { hour: { exact: [6, 8, 10, 11, 12, 13, 14, 18, 20, 22] } }, () => {
    console.log(new Date().toISOString(), "Fetching canteen info and menus");
    clearMenus();
    crawlMenusForWeek();
@@ -76,3 +76,6 @@ Deno.cron("Flush logs to disk", { minute: { every: 1 } }, () => {
    console.log(new Date().toISOString(), "Flushing logs to disk");
    flushLogsToDisk();
 });
+
+clearMenus()
+crawlMenusForWeek()
