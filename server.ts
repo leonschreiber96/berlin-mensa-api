@@ -1,5 +1,6 @@
 import { Application } from "jsr:@oak/oak/application";
 import { Router } from "jsr:@oak/oak/router";
+import { oakCors } from "https://deno.land/x/cors/mod.ts";
 
 import CANTEENS from "./canteen.ts";
 import JsonFilePersistence from "./persistence.ts";
@@ -55,6 +56,7 @@ apiRouter.get("/menu/:canteenId", async (ctx) => {
 const app = new Application();
 const port = 8080;
 
+app.use(oakCors());
 app.use(apiRouter.routes());
 app.use(apiRouter.allowedMethods());
 app.use(staticRouter.routes());

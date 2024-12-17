@@ -3,7 +3,7 @@ module.exports = {
     {
       name: "mensa_api",
       script: "deno",
-      args: "run --unstable-cron --allow-all server.ts",
+      args: "run --unstable-cron --allow-env --allow-read --allow-net --allow-write server.ts",
       interpreter: "none", // "none" means PM2 will not try to interpret the script as node
     },
   ],
