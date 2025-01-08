@@ -4,6 +4,7 @@ services:
     build: .
     ports:
       - "8080:8080"
+    restart: always
     volumes:
       - ./logs:/app/logs  # Mount local logs directory
       - ./data:/app/data  # Mount local data directory

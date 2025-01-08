@@ -22,7 +22,7 @@ staticRouter.get("/", async (ctx) => {
    });
 });
 
-apiRouter.get("/", (ctx) => {
+apiRouter.get("/canteens", (ctx) => {
    ctx.response.headers.set("Content-Type", "application/json");
    ctx.response.body = CANTEENS;
 });
