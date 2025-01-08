@@ -28,7 +28,6 @@ apiRouter.get("/canteens", (ctx) => {
 });
 
 apiRouter.get("/menu/:canteenId", async (ctx) => {
-
    const canteenId = +ctx.params.canteenId;
    if (isNaN(canteenId) || !CANTEENS.map(canteen => canteen.id).includes(canteenId)) {
       ctx.response.status = 400;
@@ -46,6 +45,8 @@ apiRouter.get("/menu/:canteenId", async (ctx) => {
 
    const reader = new JsonFilePersistence<Group[]>(`./data/${canteenId}_${date.toISOString().split("T")[0]}.json`);
    const menu = await reader.read();
+   // Remove all entries from the response that have been removed by Studierendenwerk (these are stored as historic)
+   menu?.forEach(group => group.meals = group.meals.filter(meal => !meal.historic));
 
    const canteen = CANTEENS.find(canteen => canteen.id === canteenId);
 

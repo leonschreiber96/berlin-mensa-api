@@ -16,11 +16,13 @@ interface Meal {
    mealAllergens: Allergen[];
    ampelValue: number;
    dietValue: string | null;
+   historic?: boolean;
 }
 
 export interface Group {
    title: string;
    meals: Meal[];
+   inactiveMeals: Meal[];
 }
 
 async function fetchCanteenHtml(id: number, date?: Date): Promise<string> {
@@ -62,7 +64,7 @@ function parseMenu (html: string) {
    $('.splGroupWrapper').each((_, el) => {
       const title = $(el).find('.splGroup').text().trim();
       const meals = $(el).find('.splMeal').map((_, mealEl) => parseMeal($(mealEl), allergens)).get();
-      groups.push({ title, meals });
+      groups.push({ title, meals, inactiveMeals: [] });
    });
 
    return groups;

@@ -29,11 +29,28 @@ function saveMenu(canteenId: number, menu: Group[], date: Date) {
    persistence.save(menu);
 }
 
+function mergeMenus(oldMenu: Group[], newMenu: Group[]): Group[] {
+   const mergedMenu: Group[] = [];
+   for (const newGroup of newMenu) {
+      const oldGroup = oldMenu.find(group => group.title === newGroup.title);
+      if (oldGroup) {
+         const replacedMeals = oldGroup.meals
+            .filter(oldMeal => !newGroup.meals.some(newMeal => newMeal.name === oldMeal.name))
+            .map(oldMeal => ({ ...oldMeal, historic: true }));
+         newGroup.meals.push(...replacedMeals);
+      }
+      mergedMenu.push(newGroup); 
+   }
+   return mergedMenu;
+}
+
 export async function crawlMenusForWeek() {
    const remainingWeekdays = getRemainingWeekdaysOfWeek();
    for (const date of remainingWeekdays) {
       for await (const { id, menu } of fetchAllMenusForDate(date)) {
-         saveMenu(id, menu, date);
+         const oldMenu = await new JsonFilePersistence<Group[]>(`./data/${id}_${date.toISOString().split("T")[0]}.json`).read();
+         if (oldMenu) saveMenu(id, mergeMenus(oldMenu, menu), date);
+         else saveMenu(id, menu, date);
       }
    }
 }
